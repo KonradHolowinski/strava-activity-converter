@@ -2,17 +2,27 @@ package net.holowinski.strava.stravactivity
 
 sealed trait Token
 
+object Token {
+  def fromLine(line: String): Option[Token] = line match {
+    case l if l.startsWith("wp:") => Waypoint.fromLine(l)
+    case l if l.startsWith("pow:") => Power.fromLine(l)
+    case l if l.startsWith("cad:") => Cadence.fromLine(l)
+    case _ => None
+  }
+}
+
+
 case class Waypoint(
-                     latitude: Double,
-                     longitude: Double,
-                     horizontalAcceleration: Double,
-                     verticalAcceleration: Double,
-                     altitude: Double,
-                     speed: Double,
-                     course: Double,
-                     time: Double,
-                     distance: Double
-                   ) extends Token
+ latitude: Double,
+ longitude: Double,
+ horizontalAcceleration: Double,
+ verticalAcceleration: Double,
+ altitude: Double,
+ speed: Double,
+ course: Double,
+ time: Double,
+ distance: Double
+) extends Token
 
 object Waypoint {
   val regex = """wp: lat:(\d+\.\d+); long:(\d+\.\d+); hacc:(\d+\.\d+); vacc:(\d+\.\d+); alt:(\d+\.\d+); speed:(\d+\.\d+); course:(\d+\.\d+); t:(\d+\.\d+); dt:\d+\.\d+; dist:(\d+\.\d+)""".r

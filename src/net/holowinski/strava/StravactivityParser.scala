@@ -8,6 +8,8 @@ import scala.io.Source
 import stravactivity._
 import tcx._
 
+import scala.annotation.tailrec
+
 object StravactivityParser {
 
   def main(args: Array[String]) {
@@ -51,7 +53,7 @@ object StravactivityParser {
 
   def splitByWaypointsWithAdditionalFields(tokens: List[Token]): List[WaypointWithExtraFields] = {
 
-    @scala.annotation.tailrec
+    @tailrec
     def split(tokens: List[Token], agg: List[WaypointWithExtraFields]): List[WaypointWithExtraFields] = {
       val wp = takeWaypointWithAdditionalFields(tokens)
       if (wp._1.isEmpty) agg
@@ -60,7 +62,7 @@ object StravactivityParser {
     split(tokens, Nil)
   }
 
-  @scala.annotation.tailrec
+  @tailrec
   def takeWaypointWithAdditionalFields(tokens: List[Token]): (Option[WaypointWithExtraFields], List[Token]) =
     if (tokens.isEmpty) (None, tokens)
     else tokens.head match {
@@ -89,12 +91,7 @@ object StravactivityParser {
   }
 
   def tokenizeLines(lines: Iterator[String]): List[Token] = {
-    lines.map {
-      case l if l.startsWith("wp:") => Waypoint.fromLine(l)
-      case l if l.startsWith("pow:") => Power.fromLine(l)
-      case l if l.startsWith("cad:") => Cadence.fromLine(l)
-      case _ => None
-    }.toList.flatten
+    lines.map(Token.fromLine).toList.flatten
   }
 
 }
